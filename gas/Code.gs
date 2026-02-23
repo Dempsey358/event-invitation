@@ -15,10 +15,8 @@ function normalizeName(name) {
   var result = name.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
     return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
   });
-  // 全角スペース→半角スペース
-  result = result.replace(/　/g, ' ');
-  // 前後のスペース除去 & 連続スペースを1つに
-  result = result.replace(/\s+/g, ' ').trim();
+  // 全角スペース→半角スペース、その後すべてのスペースを除去
+  result = result.replace(/[\s　]+/g, '');
   // 小文字化（英字の場合の比較用）
   result = result.toLowerCase();
   return result;

@@ -654,12 +654,46 @@ body {
   background: var(--accent-1);
 }
 
+/* 参加：選択時 */
+.radio-label.attend:has(input[type="radio"]:checked) {
+  background: rgba(74, 222, 128, 0.15);
+  border-color: #4ade80;
+  box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.25);
+  transform: scale(1.02);
+}
+
+.radio-label.attend input[type="radio"]:checked~.radio-custom {
+  border-color: #4ade80;
+}
+
+.radio-label.attend input[type="radio"]:checked~.radio-custom::after {
+  background: #4ade80;
+}
+
 .radio-label.attend input[type="radio"]:checked~.radio-text {
-  color: var(--accent-1);
+  color: #16a34a;
+  font-weight: 700;
+}
+
+/* 不参加：選択時 */
+.radio-label.decline:has(input[type="radio"]:checked) {
+  background: rgba(212, 86, 122, 0.12);
+  border-color: var(--accent-2);
+  box-shadow: 0 0 0 2px rgba(212, 86, 122, 0.2);
+  transform: scale(1.02);
+}
+
+.radio-label.decline input[type="radio"]:checked~.radio-custom {
+  border-color: var(--accent-2);
+}
+
+.radio-label.decline input[type="radio"]:checked~.radio-custom::after {
+  background: var(--accent-2);
 }
 
 .radio-label.decline input[type="radio"]:checked~.radio-text {
   color: var(--accent-2);
+  font-weight: 700;
 }
 
 .radio-text {
