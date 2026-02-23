@@ -267,7 +267,12 @@
         }
 
         form.classList.add('hidden');
-        document.getElementById('rsvp-success').classList.remove('hidden');
+        const successEl = document.getElementById('rsvp-success');
+        if (formData.attendance === '不参加') {
+          successEl.querySelector('.result-text').textContent = 'ご回答ありがとうございます！';
+          successEl.querySelector('.result-sub').textContent = 'またの機会にぜひご参加ください🙏';
+        }
+        successEl.classList.remove('hidden');
       } catch (err) {
         console.error('RSVP submission failed:', err);
         form.classList.add('hidden');
