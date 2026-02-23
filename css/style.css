@@ -4,25 +4,25 @@
 
 /* ---------- Theme Variables ---------- */
 :root {
-  /* Default: Farewell theme */
-  --bg-primary: #1a1020;
-  --bg-secondary: #2a1832;
-  --bg-card: rgba(255, 255, 255, 0.06);
-  --bg-card-solid: #2e1f3a;
-  --text-primary: #f5f0ff;
-  --text-secondary: #c8b8d8;
-  --text-muted: #9882b0;
-  --accent-1: #f5a623;
-  --accent-2: #e8567f;
+  /* Default: Farewell theme - Warm & Bright */
+  --bg-primary: #fdf6ee;
+  --bg-secondary: #f8efe0;
+  --bg-card: rgba(255, 255, 255, 0.7);
+  --bg-card-solid: #fff8f0;
+  --text-primary: #3d2c1a;
+  --text-secondary: #6b5242;
+  --text-muted: #9a8070;
+  --accent-1: #e8844a;
+  --accent-2: #d4567a;
   --accent-gradient: linear-gradient(135deg, var(--accent-1), var(--accent-2));
-  --glow-color: rgba(245, 166, 35, 0.3);
+  --glow-color: rgba(232, 132, 74, 0.2);
   --envelope-color: #d4a76a;
   --envelope-dark: #b8894d;
   --envelope-flap: #c49558;
   --letter-bg: #fefcf7;
   --letter-text: #3d2c1a;
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --border-subtle: rgba(0, 0, 0, 0.08);
+  --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.08);
   --radius: 16px;
   --radius-sm: 8px;
   --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);

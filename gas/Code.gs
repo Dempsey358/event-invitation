@@ -7,7 +7,26 @@
  */
 
 /**
+ * 名前を正規化する（半角/全角、スペースを統一）
+ */
+function normalizeName(name) {
+  if (!name) return '';
+  // 全角英数字→半角
+  var result = name.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
+    return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+  });
+  // 全角スペース→半角スペース
+  result = result.replace(/　/g, ' ');
+  // 前後のスペース除去 & 連続スペースを1つに
+  result = result.replace(/\s+/g, ' ').trim();
+  // 小文字化（英字の場合の比較用）
+  result = result.toLowerCase();
+  return result;
+}
+
+/**
  * POSTリクエストを受け取り、スプレッドシートに書き込む
+ * 同じ名前（正規化後）が既にある場合は上書き更新
  */
 function doPost(e) {
   try {
@@ -25,13 +44,36 @@ function doPost(e) {
       headerRange.setFontColor('#ffffff');
     }
     
-    // データを追加
-    sheet.appendRow([
+    var incomingName = data.name || '';
+    var normalizedIncoming = normalizeName(incomingName);
+    var newRow = [
       data.timestamp || new Date().toISOString(),
-      data.name || '',
+      incomingName,
       data.attendance || '',
       data.message || ''
-    ]);
+    ];
+    
+    // 既存の行を検索（名前の正規化比較）
+    var lastRow = sheet.getLastRow();
+    var existingRow = -1;
+    
+    if (lastRow > 1) {
+      var nameColumn = sheet.getRange(2, 2, lastRow - 1, 1).getValues();
+      for (var i = 0; i < nameColumn.length; i++) {
+        if (normalizeName(nameColumn[i][0]) === normalizedIncoming) {
+          existingRow = i + 2; // +2: 1-indexed + header row
+          break;
+        }
+      }
+    }
+    
+    if (existingRow > 0) {
+      // 既存の行を上書き
+      sheet.getRange(existingRow, 1, 1, 4).setValues([newRow]);
+    } else {
+      // 新しい行を追加
+      sheet.appendRow(newRow);
+    }
     
     // 列幅を自動調整
     sheet.autoResizeColumns(1, 4);
