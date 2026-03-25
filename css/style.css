@@ -87,6 +87,27 @@
   --letter-text: #2a2010;
 }
 
+[data-theme="welcome_farewell"] {
+  --bg-primary: #fef5f8;
+  --bg-secondary: #fdeef3;
+  --bg-card: rgba(255, 255, 255, 0.75);
+  --bg-card-solid: #fff5f9;
+  --text-primary: #3d1f2e;
+  --text-secondary: #6b4256;
+  --text-muted: #9a7080;
+  --accent-1: #e8568a;
+  --accent-2: #a855f7;
+  --accent-gradient: linear-gradient(135deg, #f472b6, #a855f7);
+  --glow-color: rgba(244, 114, 182, 0.25);
+  --envelope-color: #e8a0bf;
+  --envelope-dark: #d48aab;
+  --envelope-flap: #e090b0;
+  --letter-bg: #fffafc;
+  --letter-text: #3d1f2e;
+  --border-subtle: rgba(0, 0, 0, 0.06);
+  --shadow-card: 0 8px 32px rgba(232, 86, 138, 0.08);
+}
+
 /* ---------- Reset & Base ---------- */
 *,
 *::before,
@@ -698,6 +719,79 @@ body {
 
 .radio-text {
   font-size: 0.9em;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: color var(--transition);
+}
+
+/* ---------- Checkbox Group (Candidate Dates) ---------- */
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition);
+  user-select: none;
+}
+
+.checkbox-label:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.checkbox-label input[type="checkbox"] {
+  display: none;
+}
+
+.checkbox-custom {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 2px solid var(--text-muted);
+  transition: all var(--transition);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.checkbox-label input[type="checkbox"]:checked ~ .checkbox-custom {
+  background: var(--accent-gradient);
+  border-color: var(--accent-1);
+}
+
+.checkbox-label input[type="checkbox"]:checked ~ .checkbox-custom::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.checkbox-label:has(input[type="checkbox"]:checked) {
+  background: rgba(168, 85, 247, 0.1);
+  border-color: var(--accent-2);
+  box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.15);
+  transform: scale(1.01);
+}
+
+.checkbox-label input[type="checkbox"]:checked ~ .checkbox-text {
+  color: var(--accent-2);
+  font-weight: 700;
+}
+
+.checkbox-text {
+  font-size: 0.95em;
   font-weight: 500;
   color: var(--text-secondary);
   transition: color var(--transition);

@@ -34,9 +34,9 @@ function doPost(e) {
     
     // ヘッダーが未設定の場合に設定
     if (sheet.getLastRow() === 0) {
-      sheet.appendRow(['タイムスタンプ', '名前', '出欠', 'メッセージ']);
+      sheet.appendRow(['タイムスタンプ', '名前', '出欠', '希望日', 'メッセージ']);
       // ヘッダー行をスタイリング
-      var headerRange = sheet.getRange(1, 1, 1, 4);
+      var headerRange = sheet.getRange(1, 1, 1, 5);
       headerRange.setFontWeight('bold');
       headerRange.setBackground('#4a90d9');
       headerRange.setFontColor('#ffffff');
@@ -44,10 +44,18 @@ function doPost(e) {
     
     var incomingName = data.name || '';
     var normalizedIncoming = normalizeName(incomingName);
+    
+    // 希望日を配列からカンマ区切り文字列に変換
+    var preferredDates = '';
+    if (data.preferredDates && Array.isArray(data.preferredDates)) {
+      preferredDates = data.preferredDates.join(', ');
+    }
+    
     var newRow = [
       data.timestamp || new Date().toISOString(),
       incomingName,
       data.attendance || '',
+      preferredDates,
       data.message || ''
     ];
     
@@ -67,14 +75,14 @@ function doPost(e) {
     
     if (existingRow > 0) {
       // 既存の行を上書き
-      sheet.getRange(existingRow, 1, 1, 4).setValues([newRow]);
+      sheet.getRange(existingRow, 1, 1, 5).setValues([newRow]);
     } else {
       // 新しい行を追加
       sheet.appendRow(newRow);
     }
     
     // 列幅を自動調整
-    sheet.autoResizeColumns(1, 4);
+    sheet.autoResizeColumns(1, 5);
     
     return ContentService
       .createTextOutput(JSON.stringify({ status: 'success' }))

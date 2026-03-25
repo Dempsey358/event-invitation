@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja" data-theme="farewell">
+<html lang="ja" data-theme="welcome_farewell">
 
 <head>
   <meta charset="UTF-8">
@@ -58,7 +58,7 @@
           <span class="detail-label">会費</span>
           <span class="detail-value" id="detail-fee"></span>
         </div>
-        <div class="detail-item">
+        <div class="detail-item" id="detail-guest-container" style="display:none">
           <span class="detail-icon">🎉</span>
           <span class="detail-label">主賓</span>
           <span class="detail-value" id="detail-guest"></span>
@@ -74,7 +74,7 @@
           <a class="detail-value detail-link" id="detail-map" href="#" target="_blank" rel="noopener">Google Mapsで開く</a>
         </div>
       </div>
-      <a class="btn-calendar" id="btn-calendar" href="#" target="_blank" rel="noopener">
+      <a class="btn-calendar" id="btn-calendar" href="#" target="_blank" rel="noopener" style="display:none">
         <span class="btn-calendar-icon">📅</span>
         <span>Googleカレンダーに追加</span>
       </a>
@@ -142,9 +142,15 @@
             </label>
           </div>
         </div>
+        <div class="form-group" id="candidate-dates-group" style="display:none">
+          <label>希望日 <span class="required">*</span>（複数選択可）</label>
+          <div class="checkbox-group" id="candidate-dates-container">
+            <!-- Populated by JS -->
+          </div>
+        </div>
         <div class="form-group">
           <label for="rsvp-message">メッセージ（任意）</label>
-          <textarea id="rsvp-message" name="message" rows="3" placeholder="アレルギー情報やコメントなど"></textarea>
+          <textarea id="rsvp-message" name="message" rows="3" placeholder="コメントなど"></textarea>
         </div>
         <button type="submit" class="btn-submit" id="btn-submit">
           <span class="btn-text">回答を送信</span>
@@ -154,7 +160,7 @@
       <div class="rsvp-result hidden" id="rsvp-success">
         <div class="result-icon">✅</div>
         <p class="result-text">ご回答ありがとうございます！</p>
-        <p class="result-sub">当日お会いできるのを楽しみにしています。</p>
+        <p class="result-sub">日程が確定次第、改めてご連絡いたします。</p>
       </div>
       <div class="rsvp-result hidden" id="rsvp-error">
         <div class="result-icon">⚠️</div>

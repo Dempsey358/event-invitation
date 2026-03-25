@@ -56,6 +56,14 @@
       const dateStr = `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日（${weekDays[d.getDay()]}） ${padZero(d.getHours())}:${padZero(d.getMinutes())} 開始`;
       const durationStr = config.duration ? `（${config.duration}）` : '';
       setText('detail-date', dateStr + durationStr);
+    } else if (config.candidateDates && config.candidateDates.length > 0) {
+      // Show candidate dates
+      const weekDays = ['日', '月', '火', '水', '木', '金', '土'];
+      const dateLabels = config.candidateDates.map(ds => {
+        const d = new Date(ds + 'T00:00:00');
+        return `${d.getMonth() + 1}/${d.getDate()}（${weekDays[d.getDay()]}）`;
+      });
+      setText('detail-date', '候補日：' + dateLabels.join('、'));
     }
 
     // Venue
@@ -64,7 +72,13 @@
     setText('detail-venue', venueText);
 
     setText('detail-fee', config.fee || '');
-    setText('detail-guest', config.guest || '');
+
+    // Guest - show only if set
+    if (config.guest) {
+      const guestContainer = document.getElementById('detail-guest-container');
+      if (guestContainer) guestContainer.style.display = '';
+      setText('detail-guest', config.guest);
+    }
 
     // Organizer
     let orgText = config.organizer || '';
@@ -83,7 +97,7 @@
 
     // RSVP deadline
     if (config.rsvpDeadline) {
-      const dl = new Date(config.rsvpDeadline);
+      const dl = new Date(config.rsvpDeadline + 'T00:00:00');
       const weekDays = ['日', '月', '火', '水', '木', '金', '土'];
       setText('rsvp-deadline', `回答期限：${dl.getMonth() + 1}月${dl.getDate()}日（${weekDays[dl.getDay()]}）まで`);
     }
@@ -91,8 +105,41 @@
     setText('rsvp-notes', config.additionalNotes || '');
     setText('footer-organizer', config.organizer || '');
 
-    // Google Calendar button
-    setupCalendarButton();
+    // Google Calendar button - only show if eventDate is set
+    if (config.eventDate) {
+      const btn = document.getElementById('btn-calendar');
+      if (btn) btn.style.display = '';
+      setupCalendarButton();
+    }
+
+    // Populate candidate date checkboxes
+    setupCandidateDates();
+  }
+
+  // ---- Candidate Dates ----
+  function setupCandidateDates() {
+    if (!config.candidateDates || config.candidateDates.length === 0) return;
+
+    const group = document.getElementById('candidate-dates-group');
+    const container = document.getElementById('candidate-dates-container');
+    if (!group || !container) return;
+
+    // Keep hidden initially - will be shown when '参加する' is selected
+
+    const weekDays = ['日', '月', '火', '水', '木', '金', '土'];
+    config.candidateDates.forEach((dateStr, index) => {
+      const d = new Date(dateStr + 'T00:00:00');
+      const label = `${d.getMonth() + 1}月${d.getDate()}日（${weekDays[d.getDay()]}）`;
+
+      const checkboxLabel = document.createElement('label');
+      checkboxLabel.className = 'checkbox-label';
+      checkboxLabel.innerHTML = `
+        <input type="checkbox" name="preferredDates" value="${escapeHTML(dateStr)}">
+        <span class="checkbox-custom"></span>
+        <span class="checkbox-text">${label}</span>
+      `;
+      container.appendChild(checkboxLabel);
+    });
   }
 
   // ---- Google Calendar ----
@@ -137,7 +184,12 @@
         setTimeout(() => {
           fadeOutSection('envelope-section');
           showSection('details-section');
-          showSection('countdown-section');
+
+          // Only show countdown if eventDate is set
+          if (config.eventDate) {
+            showSection('countdown-section');
+          }
+
           showSection('rsvp-section');
           showSection('footer');
 
@@ -234,8 +286,39 @@
     const btnRetry = document.getElementById('btn-retry');
     if (!form) return;
 
+    // Show/hide candidate dates based on attendance selection
+    const attendanceRadios = form.querySelectorAll('input[name="attendance"]');
+    const datesGroup = document.getElementById('candidate-dates-group');
+
+    attendanceRadios.forEach(radio => {
+      radio.addEventListener('change', () => {
+        if (datesGroup && config.candidateDates && config.candidateDates.length > 0) {
+          if (radio.value === '参加') {
+            datesGroup.style.display = '';
+          } else {
+            datesGroup.style.display = 'none';
+            // Uncheck all candidate dates when declining
+            const checkboxes = datesGroup.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(cb => { cb.checked = false; });
+          }
+        }
+      });
+    });
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+
+      const attendance = document.querySelector('input[name="attendance"]:checked')?.value || '';
+
+      // Validate: if attending and candidate dates exist, at least one must be selected
+      if (attendance === '参加' && config.candidateDates && config.candidateDates.length > 0) {
+        const checkedDates = form.querySelectorAll('input[name="preferredDates"]:checked');
+        if (checkedDates.length === 0) {
+          alert('参加される場合は、希望日を1つ以上選択してください。');
+          return;
+        }
+      }
+
       const btn = document.getElementById('btn-submit');
       const btnText = btn.querySelector('.btn-text');
       const btnLoader = btn.querySelector('.btn-loader');
@@ -245,9 +328,16 @@
       btnText.classList.add('hidden');
       btnLoader.classList.remove('hidden');
 
+      // Gather preferred dates
+      const preferredDates = [];
+      form.querySelectorAll('input[name="preferredDates"]:checked').forEach(cb => {
+        preferredDates.push(cb.value);
+      });
+
       const formData = {
         name: document.getElementById('rsvp-name').value.trim(),
-        attendance: document.querySelector('input[name="attendance"]:checked')?.value || '',
+        attendance: attendance,
+        preferredDates: preferredDates,
         message: document.getElementById('rsvp-message').value.trim(),
         timestamp: new Date().toISOString()
       };
