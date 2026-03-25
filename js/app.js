@@ -80,10 +80,14 @@
       setText('detail-guest', config.guest);
     }
 
-    // Organizer
-    let orgText = config.organizer || '';
-    if (config.organizerDepartment) orgText = `${config.organizerDepartment} ${orgText}`;
-    setText('detail-organizer', orgText);
+    // Organizer - show only if set
+    if (config.organizer) {
+      const orgContainer = document.getElementById('detail-organizer-container');
+      if (orgContainer) orgContainer.style.display = '';
+      let orgText = config.organizer;
+      if (config.organizerDepartment) orgText = `${config.organizerDepartment} ${orgText}`;
+      setText('detail-organizer', orgText);
+    }
 
     // Map
     if (config.mapUrl) {
@@ -103,7 +107,7 @@
     }
 
     setText('rsvp-notes', config.additionalNotes || '');
-    setText('footer-organizer', config.organizer || '');
+    setText('footer-text', config.eventName || '');
 
     // Google Calendar button - only show if eventDate is set
     if (config.eventDate) {
